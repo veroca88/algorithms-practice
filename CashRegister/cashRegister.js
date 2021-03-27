@@ -8,22 +8,40 @@
 
 function checkCashRegister(price, cash, cid) {
     let checkRegister = { status: "", change: [] };
-    let sumCashRegister = 0
-    let operationPrice = cash - price
-    let currencyUnit = {
-        "Penny": 0.01,
-        "Nickel": 0.05,
-        "Dime": 0.1,
-        "Quarter": 0.25,
-        "Dollar": 1,
-        "Five Dollars": 5,
-        "Ten Dollars": 10,
-        "Twenty Dollars": 20,
-        "One-hundred Dollars": 100
-    }
+    let currencyUnit = [
+        { name: "One-hundred Dollars", value: 100.0 },
+        { name: "Twenty Dollars", value: 20.0 },
+        { name: "Ten Dollars", value: 10.0 },
+        { name: "Five Dollars", value: 5.0 },
+        { name: "Dollar", value: 1.0 },
+        { name: "Quarter", value: 0.25 },
+        { name: "Dime", value: 0.1 },
+        { name: "Nickel", value: 0.05 },
+        { name: "Penny", value: 0.01 }
+    ]
 
-    cid.map(element => sumCashRegister += element[1])
-    sumCashRegister.toFixed(2)
+    let statusOfRegister = (cid, cash, price) => {
+        let sumCashRegister = 0;
+        let operationPrice = cash - price
+
+        cid.map(element => sumCashRegister += element[1])
+        sumCashRegister.toFixed(2)
+
+        if (cash < price) {
+            change.status = "IN NOT ENOUGH MONEY";
+        }
+        if (sumCashRegister < operationPrice) {
+            change.status = "INSUFFICIENT_FUNDS"
+        }
+        if (sumCashRegister == operationPrice) {
+            change.status = "CLOSED"
+            change.change = sumCashRegister
+        }
+        else {
+            change.status = "OPEN"
+            change.change = operationPrice
+        }
+    }
 
     return change;
 }
