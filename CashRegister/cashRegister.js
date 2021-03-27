@@ -9,6 +9,18 @@
 function checkCashRegister(price, cash, cid) {
     let checkRegister = { status: "", change: [] };
     let sumCashRegister = 0
+    let operationPrice = cash - price
+    let currencyUnit = {
+        "Penny": 0.01,
+        "Nickel": 0.05,
+        "Dime": 0.1,
+        "Quarter": 0.25,
+        "Dollar": 1,
+        "Five Dollars": 5,
+        "Ten Dollars": 10,
+        "Twenty Dollars": 20,
+        "One-hundred Dollars": 100
+    }
 
     cid.map(element => sumCashRegister += element[1])
     sumCashRegister.toFixed(2)
