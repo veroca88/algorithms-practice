@@ -2,45 +2,58 @@
 // Design a cash register drawer function checkCashRegister() that accepts purchase price as the first argument (price), payment as the second argument (cash), and cash-in-drawer (cid) as the third argument.
 // cid is a 2D array listing available currency.
 // The checkCashRegister() function should always return an object with a status key and a change key.
-// Return {status: "INSUFFICIENT_FUNDS", change: []} if cash-in-drawer is less than the change due, or if you cannot return the exact change.
+// Return {status: "INSUFFICIENT_FUNDS", change: []} if cash-in-drawer is less than the change due, or if you cannot return the exact checkRegister.
 // Return {status: "CLOSED", change: [...]} with cash-in-drawer as the value for the key change if it is equal to the change due.
 // Otherwise, return {status: "OPEN", change: [...]}, with the change due in coins and bills, sorted in highest to lowest order, as the value of the change key.
 
+let currencyUnit = [
+    { name: "One-hundred Dollars", value: 100.0 },
+    { name: "Twenty Dollars", value: 20.0 },
+    { name: "Ten Dollars", value: 10.0 },
+    { name: "Five Dollars", value: 5.0 },
+    { name: "Dollar", value: 1.0 },
+    { name: "Quarter", value: 0.25 },
+    { name: "Dime", value: 0.1 },
+    { name: "Nickel", value: 0.05 },
+    { name: "Penny", value: 0.01 }
+]
 function checkCashRegister(price, cash, cid) {
     let checkRegister = { status: "", change: [] };
-    let currencyUnit = [
-        { name: "One-hundred Dollars", value: 100.0 },
-        { name: "Twenty Dollars", value: 20.0 },
-        { name: "Ten Dollars", value: 10.0 },
-        { name: "Five Dollars", value: 5.0 },
-        { name: "Dollar", value: 1.0 },
-        { name: "Quarter", value: 0.25 },
-        { name: "Dime", value: 0.1 },
-        { name: "Nickel", value: 0.05 },
-        { name: "Penny", value: 0.01 }
-    ]
+    let totalCid = 0;
+    let newCid = []
+    let operationPrice = cash - price
 
-    let statusOfRegister = (cid, cash, price) => {
-        let sumCashRegister = 0;
-        let operationPrice = cash - price
+    // Put the input cid in correct format and sum all the money
 
-        cid.map(element => sumCashRegister += element[1])
-        sumCashRegister.toFixed(2)
+    cid.map((element, index) => {
+        totalCid += element[1];
+        newCid.push({ name: element[0], value: element[1] })
+        if (index === 8) { newCid.push({ total: totalCid }) }
+    }
+    )
 
-        if (cash < price) {
-            change.status = "IN NOT ENOUGH MONEY";
-        }
-        if (sumCashRegister < operationPrice) {
-            change.status = "INSUFFICIENT_FUNDS"
-        }
-        if (sumCashRegister == operationPrice) {
-            change.status = "CLOSED"
-            change.change = sumCashRegister
-        }
-        else {
-            change.status = "OPEN"
-            change.change = operationPrice
-        }
+    //If the client cash is not enough
+
+    if (cash < price) {
+        checkRegister.status = "IN NOT ENOUGH MONEY";
+    }
+    // Handle exact change
+
+    if (newCid[9].total == operationPrice) {
+        checkRegister.status = "CLOSED"
+        checkRegister.change = newCid
+        return checkRegister
+    }
+
+    // Handle insufficient funds
+
+    if (sumCashRegister < operationPrice) {
+        checkRegister.status = "INSUFFICIENT_FUNDS"
+        return checkRegister
+    }
+    else {
+        checkRegister.status = "OPEN"
+        checkRegister.change = operationPrice
     }
 
     return change;
