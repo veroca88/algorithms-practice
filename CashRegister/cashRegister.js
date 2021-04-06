@@ -6,18 +6,6 @@
 // Return {status: "CLOSED", change: [...]} with cash-in-drawer as the value for the key change if it is equal to the change due.
 // Otherwise, return {status: "OPEN", change: [...]}, with the change due in coins and bills, sorted in highest to lowest order, as the value of the change key.
 
-let currencyUnit = {
-    "One-hundred Dollars": 100.0,
-    "Twenty Dollars": 20.0,
-    "Ten Dollars": 10.0,
-    "Five Dollars": 5.0,
-    "Dollar": 1.0,
-    "Quarter": 0.25,
-    "Dime": 0.1,
-    "Nickel": 0.05,
-    "Penny": 0.01
-}
-
 function checkCashRegister(price, cash, cid) {
     let checkRegister = { status: "", change: cid };
     // Calculate the change I need
@@ -37,8 +25,39 @@ function checkCashRegister(price, cash, cid) {
     checkRegister.change = getCustomerChange(changeNeeded, cid)
 }
 
-function getCustomerChange(changeNeeded, cid) {
+function getCustomerChange(changeNeeded, changeInDrawer) {
+    const change = [];
+    let currencyUnit = {
+        "ONE HUNDRED": 100.0,
+        "TWENTY": 20.0,
+        "TEN": 10.0,
+        "FIVE": 5.0,
+        "ONE": 1.0,
+        "QUARTER": 0.25,
+        "DIME": 0.1,
+        "NICKEL": 0.05,
+        "PENNY": 0.01
+    }
+    for (let i = changeInDrawer.length - 1; i >= 0; i--) {
+        const coinName = changeInDrawer[i][0]
+        const coinTotal = changeInDrawer[i][1]
+        const coinValue = currencyUnit[coinName]
+        let coinAmount = (coinTotal / coinValue).toFixed(2)
+        let coinsToReturn = 0
 
+        while (changeNeeded >= coinValue && coinAmount > 0) {
+            changeNeeded -= coinValue
+            changeNeeded = changeNeeded.toFixed(2)
+            coinAmount--
+            coinsToReturn++
+        }
+
+        //  Avoid return 0 of any value (coin or bill)
+        if (coinsToReturn > 0) {
+            change.push([coinName, coinsToReturn * coinValue])
+        }
+    }
+    return change
 }
 
 function getTotalInDrawer(cashInDrawer) {
