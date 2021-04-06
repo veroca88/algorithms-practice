@@ -27,7 +27,17 @@ function checkCashRegister(price, cash, cid) {
     // Update the status
     checkRegister.status = getStatusOfRegister(changeNeeded, totalInDrawerAvailable)
 
+    // If the status is INSUFFICIENT_FUNDS end function
+    if (checkRegister.status === "INSUFFICIENT_FUNDS") {
+        checkRegister.change = []
+        return checkRegister
+    }
 
+    // To get the change for the costumer
+    checkRegister.change = getCustomerChange(changeNeeded, cid)
+}
+
+function getCustomerChange(changeNeeded, cid) {
 
 }
 
