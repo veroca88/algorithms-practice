@@ -6,57 +6,47 @@
 // Return {status: "CLOSED", change: [...]} with cash-in-drawer as the value for the key change if it is equal to the change due.
 // Otherwise, return {status: "OPEN", change: [...]}, with the change due in coins and bills, sorted in highest to lowest order, as the value of the change key.
 
-let currencyUnit = [
-    { name: "One-hundred Dollars", value: 100.0 },
-    { name: "Twenty Dollars", value: 20.0 },
-    { name: "Ten Dollars", value: 10.0 },
-    { name: "Five Dollars", value: 5.0 },
-    { name: "Dollar", value: 1.0 },
-    { name: "Quarter", value: 0.25 },
-    { name: "Dime", value: 0.1 },
-    { name: "Nickel", value: 0.05 },
-    { name: "Penny", value: 0.01 }
-]
+let currencyUnit = {
+    "One-hundred Dollars": 100.0,
+    "Twenty Dollars": 20.0,
+    "Ten Dollars": 10.0,
+    "Five Dollars": 5.0,
+    "Dollar": 1.0,
+    "Quarter": 0.25,
+    "Dime": 0.1,
+    "Nickel": 0.05,
+    "Penny": 0.01
+}
+
 function checkCashRegister(price, cash, cid) {
-    let checkRegister = { status: "", change: [] };
-    let totalCid = 0;
-    let newCid = []
-    let operationPrice = cash - price
+    let checkRegister = { status: "", change: cid };
+    // Calculate the change I need
+    let changeNeeded = parseFloat(cash - price).toFixed(2)
+    // Sum all the money I have in the drawer
+    const totalInDrawerAvailable = getTotalInDrawer(cid)
+    // Update the status
+    checkRegister.status = getStatusOfRegister(changeNeeded, totalInDrawerAvailable)
 
-    // Put the input cid in correct format and sum all the money
 
-    cid.map((element, index) => {
-        totalCid += element[1];
-        newCid.push({ name: element[0], value: element[1] })
-        if (index === 8) { newCid.push({ total: totalCid }) }
-    }
-    )
 
-    //If the client cash is not enough
+}
 
-    if (cash < price) {
-        checkRegister.status = "IN NOT ENOUGH MONEY";
-    }
-    // Handle exact change
+function getTotalInDrawer(cashInDrawer) {
+    let total = 0;
+    cashInDrawer.map(element => total += element[1])
+    return total.toFixed(2)
+}
 
-    if (newCid[9].total == operationPrice) {
-        checkRegister.status = "CLOSED"
-        checkRegister.change = newCid
-        return checkRegister
-    }
+function getStatusOfRegister(changeNeeded, totalInDrawerAvailable) {
 
     // Handle insufficient funds
+    if (Number(changeNeeded) > Number(totalInDrawerAvailable)) return "INSUFFICIENT_FUNDS"
 
-    if (sumCashRegister < operationPrice) {
-        checkRegister.status = "INSUFFICIENT_FUNDS"
-        return checkRegister
-    }
-    else {
-        checkRegister.status = "OPEN"
-        checkRegister.change = operationPrice
-    }
+    // Handle enough funds
+    if (Number(changeNeeded) < Number(totalInDrawerAvailable)) return "OPEN"
 
-    return change;
+    // Handle exact change
+    return "CLOSED"
 }
 
 
